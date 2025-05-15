@@ -1,14 +1,157 @@
 "use client";
 
-import React, { useState } from 'react';
-import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
+import { CreditFlowSimulator } from '@/components/dashboard/credit/credit-flow-simulator';
+import { CreditFlowViewer } from '@/components/dashboard/credit/credit-flow-viewer';
 import { CreditRelationshipCard } from '@/components/dashboard/credit/credit-relationship-card';
 import { CreditSummary } from '@/components/dashboard/credit/credit-summary';
-import { Building, Filter, Search, Plus } from 'lucide-react';
+import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
+import { Building, Filter, Plus, Search, Zap } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 export default function CredoresPage() {
   const [filter, setFilter] = useState('');
+  const [showSimulator, setShowSimulator] = useState(false);
+  const [selectedFlow, setSelectedFlow] = useState<{id: string, name: string, institution: string} | null>(null);
   
+  // Dados de exemplo para flows de avaliação
+  const creditFlows = [
+    {
+      id: 'flow1',
+      name: 'Flow de Avaliação Padrão',
+      description: 'Fluxo de avaliação padrão para empréstimos pessoais e financiamentos.',
+      institution: {
+        name: 'Banco XYZ',
+        logo: 'https://via.placeholder.com/40',
+      },
+      successRate: 75,
+      requiredDocuments: [
+        'Comprovante de Identidade',
+        'Comprovante de Residência',
+        'Comprovante de Renda'
+      ],
+      requiredMetrics: [
+        'Score de Crédito',
+        'Índice de Liquidez',
+        'Histórico Bancário'
+      ],
+      nodes: [
+        {
+          id: 'node1',
+          type: 'document',
+          label: 'Verificação de Documentos',
+          description: 'Verificar documentos básicos',
+          position: { x: 50, y: 50 },
+          status: 'pass'
+        },
+        {
+          id: 'node2',
+          type: 'metric',
+          label: 'Score de Crédito',
+          requiredValue: 700,
+          comparisonOperator: '>=',
+          position: { x: 250, y: 50 },
+          status: 'pass'
+        },
+        {
+          id: 'node3',
+          type: 'metric',
+          label: 'Índice de Liquidez',
+          requiredValue: 1.5,
+          comparisonOperator: '>=',
+          position: { x: 250, y: 150 },
+          status: 'pass'
+        },
+        {
+          id: 'node4',
+          type: 'integration',
+          label: 'Verificação Bancária',
+          description: 'Via Open Finance',
+          position: { x: 450, y: 100 },
+          status: 'pass'
+        },
+        {
+          id: 'node5',
+          type: 'condition',
+          label: 'Análise de Risco',
+          description: 'Avaliação final de risco',
+          position: { x: 650, y: 100 },
+          status: 'pass'
+        }
+      ],
+      edges: [
+        { source: 'node1', target: 'node2' },
+        { source: 'node1', target: 'node3' },
+        { source: 'node2', target: 'node4' },
+        { source: 'node3', target: 'node4' },
+        { source: 'node4', target: 'node5' }
+      ]
+    },
+    {
+      id: 'flow2',
+      name: 'Flow de Crédito Pessoal',
+      description: 'Fluxo de avaliação específico para crédito pessoal com taxas reduzidas.',
+      institution: {
+        name: 'Financeira ABC',
+        logo: 'https://via.placeholder.com/40',
+      },
+      successRate: 60,
+      requiredDocuments: [
+        'Comprovante de Identidade',
+        'Comprovante de Residência',
+        'Comprovante de Renda',
+        'Declaração de IR'
+      ],
+      requiredMetrics: [
+        'Score de Crédito',
+        'Histórico de Crédito',
+        'Relação Dívida/Renda'
+      ],
+      nodes: [
+        {
+          id: 'node1',
+          type: 'document',
+          label: 'Verificação de Documentos',
+          description: 'Verificar documentos básicos',
+          position: { x: 50, y: 100 },
+          status: 'pass'
+        },
+        {
+          id: 'node2',
+          type: 'metric',
+          label: 'Score de Crédito',
+          requiredValue: 720,
+          comparisonOperator: '>=',
+          position: { x: 250, y: 50 },
+          status: 'pass'
+        },
+        {
+          id: 'node3',
+          type: 'metric',
+          label: 'Relação Dívida/Renda',
+          requiredValue: 0.4,
+          comparisonOperator: '<=',
+          position: { x: 250, y: 150 },
+          status: 'unknown'
+        },
+        {
+          id: 'node4',
+          type: 'condition',
+          label: 'Análise de Perfil',
+          description: 'Avaliação de perfil de risco',
+          position: { x: 450, y: 100 },
+          status: 'unknown'
+        }
+      ],
+      edges: [
+        { source: 'node1', target: 'node2' },
+        { source: 'node1', target: 'node3' },
+        { source: 'node2', target: 'node4' },
+        { source: 'node3', target: 'node4' }
+      ]
+    }
+  ];
+
   // Dados de exemplo para relacionamentos de crédito
   const creditRelationships = [
     {
@@ -151,6 +294,21 @@ export default function CredoresPage() {
     if (!filter) return true;
     return relationship.institution.name.toLowerCase().includes(filter.toLowerCase());
   });
+  
+  // Filtrar flows
+  const filteredFlows = creditFlows.filter(flow => {
+    if (!filter) return true;
+    return flow.institution.name.toLowerCase().includes(filter.toLowerCase());
+  });
+  
+  const handleSimulateFlow = (flowId: string, flowName: string, institutionName: string) => {
+    setSelectedFlow({
+      id: flowId,
+      name: flowName,
+      institution: institutionName
+    });
+    setShowSimulator(true);
+  };
 
   return (
     <DashboardLayout>
@@ -216,7 +374,7 @@ export default function CredoresPage() {
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-6 mb-10">
             {filteredRelationships.map((relationship) => (
               <CreditRelationshipCard 
                 key={relationship.id} 
@@ -224,6 +382,44 @@ export default function CredoresPage() {
               />
             ))}
           </div>
+        )}
+        
+        <div className="mb-6 flex items-center">
+          <Zap className="h-5 w-5 text-purple-400 mr-2" />
+          <h2 className="text-lg font-semibold text-white">Flows de Avaliação</h2>
+        </div>
+        
+        <p className="text-sm text-gray-400 mb-6">
+          Aqui você pode visualizar e simular os flows de avaliação utilizados pelas instituições financeiras para determinar sua elegibilidade para crédito.
+        </p>
+        
+        {filteredFlows.length === 0 ? (
+          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-12 text-center backdrop-blur-sm">
+            <Zap className="h-12 w-12 text-gray-500 mx-auto mb-3" />
+            <p className="text-gray-400 mb-2">Nenhum flow de avaliação encontrado</p>
+            <p className="text-sm text-gray-500">
+              Não há flows de avaliação disponíveis para as instituições filtradas
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {filteredFlows.map((flow) => (
+              <CreditFlowViewer 
+                key={flow.id} 
+                flow={flow}
+                onSimulate={() => handleSimulateFlow(flow.id, flow.name, flow.institution.name)}
+              />
+            ))}
+          </div>
+        )}
+        
+        {showSimulator && selectedFlow && (
+          <CreditFlowSimulator 
+            flowId={selectedFlow.id}
+            flowName={selectedFlow.name}
+            institutionName={selectedFlow.institution}
+            onClose={() => setShowSimulator(false)}
+          />
         )}
       </div>
     </DashboardLayout>

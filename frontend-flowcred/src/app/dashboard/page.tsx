@@ -1,6 +1,7 @@
 "use client";
 
 import { AccessRequests } from '@/components/dashboard/consent/access-requests';
+import { CreditRelationshipCard } from '@/components/dashboard/credit/credit-relationship-card';
 import { DocumentList } from '@/components/dashboard/documents/document-list';
 import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
 import { MetricCard } from '@/components/dashboard/metrics/metric-card';
@@ -12,6 +13,7 @@ import {
     Shield,
     Wallet
 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   // Dados de exemplo para métricas
@@ -186,7 +188,7 @@ export default function DashboardPage() {
             title="Crédito Disponível"
             value="R$ 110.000,00"
             description="Em 4 instituições financeiras"
-            icon={<DollarSign size={24} />}
+            icon={<Wallet size={24} />}
             color="orange"
           />
         </div>
