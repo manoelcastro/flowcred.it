@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export function Navbar() {
   const [hoveredNavItem, setHoveredNavItem] = useState<string | null>(null);
@@ -111,7 +110,7 @@ export function Navbar() {
         <div className="flex items-center space-x-4 md:space-x-6">
           <a href="#" className="hidden md:block text-gray-300 hover:text-white text-sm">Fale Conosco</a>
           <Link href="/login" className="hidden sm:block text-gray-300 hover:text-white text-sm">Entrar</Link>
-          <Link href="/cadastro" className="bg-[#3B82F629] hover:bg-black/50 text-white font-semibold py-2 px-5 rounded-full text-sm md:text-base border border-[#3B82F6]/30" style={{ backdropFilter: 'blur(8px)' }}>Começar Agora</Link>
+          <Link href="/dashboard" className="bg-[#3B82F629] hover:bg-black/50 text-white font-semibold py-2 px-5 rounded-full text-sm md:text-base border border-[#3B82F6]/30" style={{ backdropFilter: 'blur(8px)' }}>Começar Agora</Link>
           <button className="lg:hidden text-white p-2" onClick={toggleMobileMenu} aria-label="Toggle mobile menu">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
           </button>

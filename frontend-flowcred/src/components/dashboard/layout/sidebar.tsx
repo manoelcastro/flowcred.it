@@ -1,19 +1,19 @@
 "use client";
 
-import React from 'react';
+import {
+    BarChart3,
+    Bell,
+    Building,
+    FileText,
+    HelpCircle,
+    LayoutDashboard,
+    Link2,
+    Settings,
+    Shield,
+    X
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Link2, 
-  Shield, 
-  Bell, 
-  BarChart3,
-  Settings,
-  HelpCircle,
-  X
-} from 'lucide-react';
 
 interface SidebarProps {
   open: boolean;
@@ -22,16 +22,17 @@ interface SidebarProps {
 
 export function Sidebar({ open, setOpen }: SidebarProps) {
   const pathname = usePathname();
-  
+
   const navigation = [
     { name: 'Visão Geral', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Documentos', href: '/dashboard/documentos', icon: FileText },
     { name: 'Integrações', href: '/dashboard/integracoes', icon: Link2 },
     { name: 'Consentimentos', href: '/dashboard/consentimentos', icon: Shield },
+    { name: 'Credores', href: '/dashboard/credores', icon: Building },
     { name: 'Notificações', href: '/dashboard/notificacoes', icon: Bell },
     { name: 'Métricas', href: '/dashboard/metricas', icon: BarChart3 },
   ];
-  
+
   const secondaryNavigation = [
     { name: 'Configurações', href: '/dashboard/configuracoes', icon: Settings },
     { name: 'Ajuda', href: '/dashboard/ajuda', icon: HelpCircle },
@@ -46,7 +47,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
         }`}
         onClick={() => setOpen(false)}
       />
-      
+
       <div
         className={`fixed inset-y-0 left-0 z-50 w-72 bg-gray-900 border-r border-gray-800 lg:static lg:block transition-transform duration-300 ease-in-out ${
           open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
@@ -59,7 +60,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
             </svg>
             <span className="ml-2 text-xl font-bold">flowCred.it</span>
           </Link>
-          
+
           <button
             className="lg:hidden p-1 rounded-md text-gray-400 hover:text-white"
             onClick={() => setOpen(false)}
@@ -67,7 +68,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
             <X size={24} />
           </button>
         </div>
-        
+
         <div className="px-2 py-4">
           <div className="space-y-1">
             {navigation.map((item) => {
@@ -88,7 +89,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
               );
             })}
           </div>
-          
+
           <div className="mt-8">
             <h3 className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
               Suporte
@@ -114,7 +115,7 @@ export function Sidebar({ open, setOpen }: SidebarProps) {
             </div>
           </div>
         </div>
-        
+
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-800">
           <div className="flex items-center">
             <div className="flex-shrink-0">

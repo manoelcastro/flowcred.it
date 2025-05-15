@@ -1,18 +1,16 @@
 "use client";
 
-import React from 'react';
+import { AccessRequests } from '@/components/dashboard/consent/access-requests';
+import { DocumentList } from '@/components/dashboard/documents/document-list';
 import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
 import { MetricCard } from '@/components/dashboard/metrics/metric-card';
 import { MetricsProgress } from '@/components/dashboard/metrics/metrics-progress';
-import { AccessRequests } from '@/components/dashboard/consent/access-requests';
-import { DocumentList } from '@/components/dashboard/documents/document-list';
-import { 
-  BarChart3, 
-  FileText, 
-  Shield, 
-  Link2,
-  Building,
-  Wallet
+import {
+    BarChart3,
+    Building,
+    FileText,
+    Shield,
+    Wallet
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -129,11 +127,35 @@ export default function DashboardPage() {
     }
   ];
 
+  // Dados de exemplo para relacionamento com credores
+  const creditRelationship = {
+    id: '1',
+    institution: {
+      name: 'Banco XYZ',
+      logo: 'https://via.placeholder.com/40',
+    },
+    relationshipSince: '10/01/2022',
+    lastEvaluation: '15/05/2023',
+    creditScore: '780',
+    totalAvailableCredit: 'R$ 50.000,00',
+    offers: [
+      {
+        id: '101',
+        type: 'Empréstimo Pessoal',
+        amount: 'R$ 30.000,00',
+        interestRate: '1,99% a.m.',
+        term: '36 meses',
+        status: 'available' as const,
+        expiresAt: '30/06/2023',
+      }
+    ],
+  };
+
   return (
     <DashboardLayout>
       <div className="py-6">
         <h1 className="text-2xl font-bold text-white mb-6">Visão Geral</h1>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <MetricCard
             title="Score de Crédito"
@@ -143,7 +165,7 @@ export default function DashboardPage() {
             trend={{ value: 5, isPositive: true }}
             color="blue"
           />
-          
+
           <MetricCard
             title="Documentos Verificados"
             value="8"
@@ -151,7 +173,7 @@ export default function DashboardPage() {
             icon={<FileText size={24} />}
             color="green"
           />
-          
+
           <MetricCard
             title="Consentimentos Ativos"
             value="3"
@@ -159,32 +181,45 @@ export default function DashboardPage() {
             icon={<Shield size={24} />}
             color="purple"
           />
-          
+
           <MetricCard
-            title="Integrações Conectadas"
-            value="2"
-            description="De 5 integrações disponíveis"
-            icon={<Link2 size={24} />}
+            title="Crédito Disponível"
+            value="R$ 110.000,00"
+            description="Em 4 instituições financeiras"
+            icon={<DollarSign size={24} />}
             color="orange"
           />
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
             <MetricsProgress metrics={metrics} />
           </div>
-          
+
           <div>
             <AccessRequests requests={accessRequests} />
           </div>
         </div>
-        
+
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-white">Crédito Disponível</h2>
+            <Link
+              href="/dashboard/credores"
+              className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              Ver todos
+            </Link>
+          </div>
+          <CreditRelationshipCard relationship={creditRelationship} />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <DocumentList documents={documents} />
-          
+
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 backdrop-blur-sm">
             <h2 className="text-lg font-semibold text-white mb-6">Atividade Recente</h2>
-            
+
             <div className="space-y-4">
               <div className="flex">
                 <div className="flex-shrink-0">
@@ -197,7 +232,7 @@ export default function DashboardPage() {
                   <p className="text-xs text-gray-400 mt-1">Há 5 minutos</p>
                 </div>
               </div>
-              
+
               <div className="flex">
                 <div className="flex-shrink-0">
                   <div className="h-8 w-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
@@ -209,7 +244,7 @@ export default function DashboardPage() {
                   <p className="text-xs text-gray-400 mt-1">Há 2 horas</p>
                 </div>
               </div>
-              
+
               <div className="flex">
                 <div className="flex-shrink-0">
                   <div className="h-8 w-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
@@ -221,7 +256,7 @@ export default function DashboardPage() {
                   <p className="text-xs text-gray-400 mt-1">Há 1 dia</p>
                 </div>
               </div>
-              
+
               <div className="flex">
                 <div className="flex-shrink-0">
                   <div className="h-8 w-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400">
