@@ -1,32 +1,24 @@
-import { FluidParticles } from "@/components/ui/fluid-particle";
+import { CTASection } from '@/components/cta-section';
+import { FeaturesSection } from '@/components/features-section';
+import { Footer } from '@/components/footer';
+import { HeroSection } from '@/components/hero-section';
+import { UserProfilesSection } from '@/components/user-profiles-section';
 
-export default function FluidParticle01() {
+export default function Home() {
   return (
-    <main className="relative w-full h-screen overflow-hidden flex items-center justify-center">
-  <div className="absolute inset-0">
-    <FluidParticles
-      particleDensity={100}
-      particleSize={1}
-      particleColor="#555555"
-      activeColor="#000000"
-      maxBlastRadius={300}
-      hoverDelay={1}
-      interactionDistance={100}
-    />
-  </div>
- 
-  <div className="relative z-10 text-center">
-    <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
-      Fluid Compute
-    </h1>
-  </div>
-</main>
+    <main className="bg-black min-h-screen">
+      <HeroSection />
+      <FeaturesSection />
+      <UserProfilesSection />
+      <CTASection />
+      <Footer />
+    </main>
   );
 }
 
 
 
-/* 
+/*
 import Image from "next/image";
 
 export default function Home() {
