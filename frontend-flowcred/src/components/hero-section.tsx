@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import React, { Suspense, lazy, useEffect, useRef } from 'react';
+import { Suspense, lazy, useEffect, useRef } from 'react';
 import { Navbar } from './navbar';
 
 const Spline = lazy(() => import('@splinetool/react-spline'));
@@ -43,7 +43,7 @@ function HeroSplineBackground() {
   );
 }
 
-function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<HTMLDivElement | null> }) {
+/* function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<HTMLDivElement | null> }) {
   return (
     <section className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 mt-11 md:mt-12">
       <div ref={screenshotRef} className="bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-700/50 w-full md:w-[80%] lg:w-[70%] mx-auto">
@@ -57,7 +57,7 @@ function ScreenshotSection({ screenshotRef }: { screenshotRef: React.RefObject<H
       </div>
     </section>
   );
-}
+} */
 
 function HeroContent() {
   return (
@@ -72,12 +72,12 @@ function HeroContent() {
         <Link href="/cadastro" className="bg-[#3B82F629] hover:bg-black/50 text-white font-semibold py-2 sm:py-3 px-6 sm:px-8 rounded-full transition duration-300 w-full sm:w-auto border border-[#3B82F6]/30 text-center" style={{ backdropFilter: 'blur(8px)' }}>
           Começar Agora
         </Link>
-        <button className="pointer-events-auto bg-[#0009] border border-gray-600 hover:border-gray-400 text-gray-200 hover:text-white font-medium py-2 sm:py-3 px-6 sm:px-8 rounded-full transition duration-300 flex items-center justify-center w-full sm:w-auto">
+        <Link href="/dashboard" className="pointer-events-auto bg-[#0009] border border-gray-600 hover:border-gray-400 text-gray-200 hover:text-white font-medium py-2 sm:py-3 px-6 sm:px-8 rounded-full transition duration-300 flex items-center justify-center w-full sm:w-auto">
           <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
           </svg>
           Ver Demonstração
-        </button>
+        </Link>
       </div>
     </div>
   );
@@ -126,7 +126,7 @@ export function HeroSection() {
           </div>
         </div>
       </div>
-      
+
       {/* <div className="bg-black relative z-10" style={{ marginTop: '-10vh' }}>
         <ScreenshotSection screenshotRef={screenshotRef} />
         <div className="container mx-auto px-4 py-16 text-white">
