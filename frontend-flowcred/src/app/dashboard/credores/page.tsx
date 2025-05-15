@@ -6,14 +6,14 @@ import { CreditRelationshipCard } from '@/components/dashboard/credit/credit-rel
 import { CreditSummary } from '@/components/dashboard/credit/credit-summary';
 import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
 import { Building, Filter, Plus, Search, Zap } from 'lucide-react';
-import Link from 'next/link';
+
 import { useState } from 'react';
 
 export default function CredoresPage() {
   const [filter, setFilter] = useState('');
   const [showSimulator, setShowSimulator] = useState(false);
   const [selectedFlow, setSelectedFlow] = useState<{id: string, name: string, institution: string} | null>(null);
-  
+
   // Dados de exemplo para flows de avaliação
   const creditFlows = [
     {
@@ -267,7 +267,7 @@ export default function CredoresPage() {
       ],
     },
   ];
-  
+
   // Calcular o total de crédito disponível
   const totalAvailableCredit = creditRelationships.reduce(
     (total, relationship) => {
@@ -276,31 +276,31 @@ export default function CredoresPage() {
     },
     0
   );
-  
+
   // Calcular a taxa média de juros
-  const availableOffers = creditRelationships.flatMap(r => 
+  const availableOffers = creditRelationships.flatMap(r =>
     r.offers.filter(o => o.status === 'available')
   );
-  
+
   const averageInterestRate = availableOffers.length > 0
     ? availableOffers.reduce((sum, offer) => {
         const rate = parseFloat(offer.interestRate.replace('% a.m.', '').replace(',', '.'));
         return sum + rate;
       }, 0) / availableOffers.length
     : 0;
-  
+
   // Filtrar relacionamentos
   const filteredRelationships = creditRelationships.filter(relationship => {
     if (!filter) return true;
     return relationship.institution.name.toLowerCase().includes(filter.toLowerCase());
   });
-  
+
   // Filtrar flows
   const filteredFlows = creditFlows.filter(flow => {
     if (!filter) return true;
     return flow.institution.name.toLowerCase().includes(filter.toLowerCase());
   });
-  
+
   const handleSimulateFlow = (flowId: string, flowName: string, institutionName: string) => {
     setSelectedFlow({
       id: flowId,
@@ -315,7 +315,7 @@ export default function CredoresPage() {
       <div className="py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-white">Relacionamento com Credores</h1>
-          
+
           <div className="flex space-x-3">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -329,21 +329,21 @@ export default function CredoresPage() {
                 onChange={(e) => setFilter(e.target.value)}
               />
             </div>
-            
+
             <button className="flex items-center px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors">
               <Filter className="h-4 w-4 mr-2" />
               Filtrar
             </button>
-            
+
             <button className="flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors">
               <Plus className="h-4 w-4 mr-2" />
               Adicionar Instituição
             </button>
           </div>
         </div>
-        
+
         <div className="mb-8">
-          <CreditSummary 
+          <CreditSummary
             totalAvailableCredit={`R$ ${totalAvailableCredit.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
             totalInstitutions={creditRelationships.length}
             averageInterestRate={`${averageInterestRate.toFixed(2).replace('.', ',')}% a.m.`}
@@ -351,7 +351,7 @@ export default function CredoresPage() {
             creditScoreTrend={{ value: 15, isPositive: true }}
           />
         </div>
-        
+
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 backdrop-blur-sm mb-8">
           <div className="flex items-center mb-4">
             <Building className="h-5 w-5 text-blue-400 mr-2" />
@@ -364,7 +364,7 @@ export default function CredoresPage() {
             Todas as instituições listadas abaixo tiveram acesso apenas às métricas que você autorizou explicitamente.
           </p>
         </div>
-        
+
         {filteredRelationships.length === 0 ? (
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-12 text-center backdrop-blur-sm">
             <Building className="h-12 w-12 text-gray-500 mx-auto mb-3" />
@@ -376,23 +376,23 @@ export default function CredoresPage() {
         ) : (
           <div className="space-y-6 mb-10">
             {filteredRelationships.map((relationship) => (
-              <CreditRelationshipCard 
-                key={relationship.id} 
-                relationship={relationship} 
+              <CreditRelationshipCard
+                key={relationship.id}
+                relationship={relationship}
               />
             ))}
           </div>
         )}
-        
+
         <div className="mb-6 flex items-center">
           <Zap className="h-5 w-5 text-purple-400 mr-2" />
           <h2 className="text-lg font-semibold text-white">Flows de Avaliação</h2>
         </div>
-        
+
         <p className="text-sm text-gray-400 mb-6">
           Aqui você pode visualizar e simular os flows de avaliação utilizados pelas instituições financeiras para determinar sua elegibilidade para crédito.
         </p>
-        
+
         {filteredFlows.length === 0 ? (
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-12 text-center backdrop-blur-sm">
             <Zap className="h-12 w-12 text-gray-500 mx-auto mb-3" />
@@ -404,17 +404,17 @@ export default function CredoresPage() {
         ) : (
           <div className="space-y-6">
             {filteredFlows.map((flow) => (
-              <CreditFlowViewer 
-                key={flow.id} 
+              <CreditFlowViewer
+                key={flow.id}
                 flow={flow}
                 onSimulate={() => handleSimulateFlow(flow.id, flow.name, flow.institution.name)}
               />
             ))}
           </div>
         )}
-        
+
         {showSimulator && selectedFlow && (
-          <CreditFlowSimulator 
+          <CreditFlowSimulator
             flowId={selectedFlow.id}
             flowName={selectedFlow.name}
             institutionName={selectedFlow.institution}

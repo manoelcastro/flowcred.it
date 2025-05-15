@@ -1,7 +1,6 @@
 "use client";
 
-import React from 'react';
-import { CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 
 interface Metric {
   id: string;
@@ -27,9 +26,10 @@ export function MetricsProgress({ metrics }: MetricsProgressProps) {
   // Calcular estatísticas
   const totalMetrics = metrics.length;
   const verifiedMetrics = metrics.filter(m => m.status === 'verified').length;
-  const pendingMetrics = metrics.filter(m => m.status === 'pending').length;
-  const missingMetrics = metrics.filter(m => m.status === 'missing').length;
-  
+  // Estas variáveis estão disponíveis para uso futuro
+  // const pendingMetrics = metrics.filter(m => m.status === 'pending').length;
+  // const missingMetrics = metrics.filter(m => m.status === 'missing').length;
+
   const percentVerified = Math.round((verifiedMetrics / totalMetrics) * 100);
 
   return (
@@ -40,25 +40,26 @@ export function MetricsProgress({ metrics }: MetricsProgressProps) {
           {verifiedMetrics} de {totalMetrics} métricas verificadas
         </span>
       </div>
-      
+
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm text-gray-400">Progresso geral</span>
           <span className="text-sm font-medium text-white">{percentVerified}%</span>
         </div>
         <div className="w-full bg-gray-700 rounded-full h-2.5">
-          <div 
-            className="bg-blue-500 h-2.5 rounded-full" 
+          <div
+            className="bg-blue-500 h-2.5 rounded-full"
             style={{ width: `${percentVerified}%` }}
           ></div>
         </div>
       </div>
-      
+
       <div className="space-y-6">
         {Object.entries(metricsByCategory).map(([category, categoryMetrics]) => {
           const categoryVerified = categoryMetrics.filter(m => m.status === 'verified').length;
-          const categoryPercent = Math.round((categoryVerified / categoryMetrics.length) * 100);
-          
+          // Variável disponível para uso futuro
+          // const categoryPercent = Math.round((categoryVerified / categoryMetrics.length) * 100);
+
           return (
             <div key={category}>
               <div className="flex justify-between items-center mb-2">
@@ -67,10 +68,10 @@ export function MetricsProgress({ metrics }: MetricsProgressProps) {
                   {categoryVerified} de {categoryMetrics.length} verificadas
                 </span>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 {categoryMetrics.map((metric) => (
-                  <div 
+                  <div
                     key={metric.id}
                     className="flex items-center p-2 rounded-md bg-gray-700/50 border border-gray-700"
                   >
@@ -84,8 +85,8 @@ export function MetricsProgress({ metrics }: MetricsProgressProps) {
                       <AlertCircle className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
                     )}
                     <span className={`text-sm ${
-                      metric.status === 'verified' 
-                        ? 'text-white' 
+                      metric.status === 'verified'
+                        ? 'text-white'
                         : metric.status === 'pending'
                           ? 'text-gray-300'
                           : 'text-gray-400'

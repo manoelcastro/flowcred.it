@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
 import { NotificationList } from '@/components/dashboard/notifications/notification-list';
-import { Bell, Filter, CheckSquare, Trash2 } from 'lucide-react';
+import { Bell, CheckSquare, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 export default function NotificacoesPage() {
   const [filter, setFilter] = useState<'all' | 'unread' | 'actionable'>('all');
-  
+
   // Dados de exemplo para notificações
   const [notifications, setNotifications] = useState([
     {
@@ -65,7 +65,7 @@ export default function NotificacoesPage() {
       actionable: false,
     },
   ]);
-  
+
   const handleMarkAsRead = (id: string) => {
     setNotifications(
       notifications.map(notification =>
@@ -75,33 +75,33 @@ export default function NotificacoesPage() {
       )
     );
   };
-  
+
   const handleDelete = (id: string) => {
     setNotifications(
       notifications.filter(notification => notification.id !== id)
     );
   };
-  
+
   const handleAction = (id: string) => {
     console.log(`Ação para notificação ${id}`);
   };
-  
+
   const handleMarkAllAsRead = () => {
     setNotifications(
       notifications.map(notification => ({ ...notification, read: true }))
     );
   };
-  
+
   const handleDeleteAll = () => {
     setNotifications([]);
   };
-  
+
   const filteredNotifications = notifications.filter(notification => {
     if (filter === 'unread') return !notification.read;
     if (filter === 'actionable') return notification.actionable;
     return true;
   });
-  
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
@@ -116,9 +116,9 @@ export default function NotificacoesPage() {
               </span>
             )}
           </div>
-          
+
           <div className="flex space-x-3">
-            <button 
+            <button
               className="flex items-center px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors"
               onClick={handleMarkAllAsRead}
               disabled={unreadCount === 0}
@@ -126,8 +126,8 @@ export default function NotificacoesPage() {
               <CheckSquare className="h-4 w-4 mr-2" />
               Marcar todas como lidas
             </button>
-            
-            <button 
+
+            <button
               className="flex items-center px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors"
               onClick={handleDeleteAll}
               disabled={notifications.length === 0}
@@ -137,7 +137,7 @@ export default function NotificacoesPage() {
             </button>
           </div>
         </div>
-        
+
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 backdrop-blur-sm mb-8">
           <div className="flex items-center mb-4">
             <Bell className="h-5 w-5 text-blue-400 mr-2" />
@@ -147,7 +147,7 @@ export default function NotificacoesPage() {
             Aqui você encontra todas as notificações sobre solicitações de acesso, documentos verificados, métricas geradas e outras atualizações importantes.
           </p>
         </div>
-        
+
         <div className="mb-6">
           <div className="flex space-x-2">
             <button
@@ -160,7 +160,7 @@ export default function NotificacoesPage() {
             >
               Todas ({notifications.length})
             </button>
-            
+
             <button
               className={`px-4 py-2 rounded-md text-sm transition-colors ${
                 filter === 'unread'
@@ -171,7 +171,7 @@ export default function NotificacoesPage() {
             >
               Não lidas ({unreadCount})
             </button>
-            
+
             <button
               className={`px-4 py-2 rounded-md text-sm transition-colors ${
                 filter === 'actionable'
@@ -184,7 +184,7 @@ export default function NotificacoesPage() {
             </button>
           </div>
         </div>
-        
+
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden backdrop-blur-sm">
           <div className="p-6 border-b border-gray-700">
             <h2 className="text-lg font-semibold text-white">
@@ -193,8 +193,8 @@ export default function NotificacoesPage() {
               {filter === 'actionable' && 'Notificações Acionáveis'}
             </h2>
           </div>
-          
-          <NotificationList 
+
+          <NotificationList
             notifications={filteredNotifications}
             onMarkAsRead={handleMarkAsRead}
             onDelete={handleDelete}

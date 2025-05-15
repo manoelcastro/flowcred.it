@@ -1,15 +1,14 @@
 "use client";
 
-import React from 'react';
-import { 
-  CheckCircle2, 
-  AlertCircle, 
-  Clock, 
-  FileText, 
-  Shield, 
-  Link2,
-  Info,
-  Lock
+import {
+    AlertCircle,
+    CheckCircle2,
+    Clock,
+    FileText,
+    Info,
+    Link2,
+    Lock,
+    Shield
 } from 'lucide-react';
 
 interface MetricSource {
@@ -37,7 +36,7 @@ interface MetricDetailProps {
 }
 
 export function MetricDetail({
-  id,
+  // id não é utilizado, mas mantido na interface para compatibilidade
   name,
   value,
   status,
@@ -67,7 +66,7 @@ export function MetricDetail({
             Categoria: {category}
           </div>
         </div>
-        
+
         {proofAvailable && (
           <div className="flex items-center px-3 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full">
             <Lock className="h-3 w-3 mr-1" />
@@ -75,7 +74,7 @@ export function MetricDetail({
           </div>
         )}
       </div>
-      
+
       {description && (
         <div className="mb-6">
           <div className="flex items-center mb-2">
@@ -85,7 +84,7 @@ export function MetricDetail({
           <p className="text-sm text-gray-400">{description}</p>
         </div>
       )}
-      
+
       <div className="mb-6">
         <div className="flex items-center mb-2">
           <h3 className="text-sm font-medium text-white">Valor</h3>
@@ -94,7 +93,7 @@ export function MetricDetail({
           <p className="text-2xl font-semibold text-white">{value}</p>
         </div>
       </div>
-      
+
       {source && (
         <div className="mb-6">
           <div className="flex items-center mb-2">
@@ -119,7 +118,7 @@ export function MetricDetail({
           </div>
         </div>
       )}
-      
+
       {accessedBy && accessedBy.length > 0 && (
         <div>
           <div className="flex items-center mb-2">

@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState } from 'react';
-import { 
-  Play, 
-  CheckCircle, 
-  XCircle, 
-  AlertTriangle, 
-  ArrowRight,
-  FileText,
-  BarChart3,
-  Link2,
-  RefreshCw,
-  Download,
-  Zap
+import {
+    AlertTriangle,
+    ArrowRight,
+    BarChart3,
+    CheckCircle,
+    Download,
+    FileText,
+    Link2,
+    Play,
+    RefreshCw,
+    XCircle,
+    Zap
 } from 'lucide-react';
+import { useState } from 'react';
 
 interface SimulationStep {
   id: string;
@@ -51,16 +51,16 @@ interface CreditFlowSimulatorProps {
   onClose: () => void;
 }
 
-export function CreditFlowSimulator({ 
-  flowId, 
-  flowName, 
-  institutionName, 
-  onClose 
+export function CreditFlowSimulator({
+  // flowId não é utilizado, mas mantido na interface para compatibilidade
+  flowName,
+  institutionName,
+  onClose
 }: CreditFlowSimulatorProps) {
   const [simulationState, setSimulationState] = useState<'initial' | 'running' | 'complete'>('initial');
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
-  
+
   // Dados de exemplo para os passos da simulação
   const [steps, setSteps] = useState<SimulationStep[]>([
     {
@@ -112,39 +112,39 @@ export function CreditFlowSimulator({
       status: 'pending',
     },
   ]);
-  
+
   const startSimulation = () => {
     setSimulationState('running');
     setCurrentStepIndex(0);
-    
+
     // Resetar status dos passos
     setSteps(steps.map(step => ({ ...step, status: 'pending' })));
-    
+
     // Iniciar o primeiro passo
     processStep(0);
   };
-  
+
   const processStep = (index: number) => {
     if (index >= steps.length) {
       completeSimulation();
       return;
     }
-    
+
     // Atualizar o passo atual para "processing"
     setSteps(prevSteps => {
       const newSteps = [...prevSteps];
       newSteps[index] = { ...newSteps[index], status: 'processing' };
       return newSteps;
     });
-    
+
     // Simular processamento
     setTimeout(() => {
       // Determinar o resultado do passo
       let stepResult: 'success' | 'failure' | 'warning' = 'success';
       let message = '';
-      
+
       const step = steps[index];
-      
+
       if (step.type === 'metric' && step.value !== undefined && step.requiredValue !== undefined && step.comparisonOperator) {
         // Verificar se o valor atende ao requisito
         let passes = false;
@@ -168,7 +168,7 @@ export function CreditFlowSimulator({
             passes = step.value !== step.requiredValue;
             break;
         }
-        
+
         if (!passes) {
           stepResult = 'failure';
           message = `Valor ${step.value} não atende ao requisito ${step.comparisonOperator} ${step.requiredValue}`;
@@ -178,54 +178,54 @@ export function CreditFlowSimulator({
         stepResult = 'warning';
         message = 'Comprovante de renda não encontrado';
       }
-      
+
       // Atualizar o status do passo
       setSteps(prevSteps => {
         const newSteps = [...prevSteps];
-        newSteps[index] = { 
-          ...newSteps[index], 
+        newSteps[index] = {
+          ...newSteps[index],
           status: stepResult,
           message: message || undefined
         };
         return newSteps;
       });
-      
+
       // Avançar para o próximo passo
       setCurrentStepIndex(index + 1);
-      
+
       // Se o passo falhou e é crítico, encerrar a simulação
       if (stepResult === 'failure' && (step.type === 'condition' || step.type === 'result')) {
         completeSimulation(false);
         return;
       }
-      
+
       // Processar o próximo passo
       processStep(index + 1);
     }, 1500); // Simular um delay de 1.5 segundos
   };
-  
+
   const completeSimulation = (success = true) => {
     // Determinar o resultado final
     const failedSteps = steps.filter(step => step.status === 'failure');
     const warningSteps = steps.filter(step => step.status === 'warning');
-    
+
     const approved = success && failedSteps.length === 0;
     const score = Math.round((steps.length - failedSteps.length - (warningSteps.length * 0.5)) / steps.length * 100);
-    
+
     // Criar o resultado da simulação
     const result: SimulationResult = {
       approved,
       score,
       maxScore: 100,
-      message: approved 
+      message: approved
         ? 'Sua avaliação foi aprovada! Você atende aos critérios para obter crédito.'
         : 'Sua avaliação não foi aprovada. Alguns requisitos não foram atendidos.',
       missingRequirements: [
-        ...failedSteps.map(step => ({ type: step.type as any, name: step.name })),
-        ...warningSteps.map(step => ({ type: step.type as any, name: step.name }))
+        ...failedSteps.map(step => ({ type: step.type as 'document' | 'metric' | 'integration', name: step.name })),
+        ...warningSteps.map(step => ({ type: step.type as 'document' | 'metric' | 'integration', name: step.name }))
       ],
     };
-    
+
     // Se aprovado, adicionar detalhes da oferta potencial
     if (approved) {
       result.potentialOfferDetails = {
@@ -235,18 +235,18 @@ export function CreditFlowSimulator({
         term: '36 meses',
       };
     }
-    
+
     setSimulationResult(result);
     setSimulationState('complete');
   };
-  
+
   const resetSimulation = () => {
     setSimulationState('initial');
     setCurrentStepIndex(0);
     setSimulationResult(null);
     setSteps(steps.map(step => ({ ...step, status: 'pending', message: undefined })));
   };
-  
+
   const getStepIcon = (step: SimulationStep) => {
     switch (step.type) {
       case 'document':
@@ -263,7 +263,7 @@ export function CreditFlowSimulator({
         return <ArrowRight className="h-5 w-5" />;
     }
   };
-  
+
   const getStepIconColor = (step: SimulationStep) => {
     switch (step.type) {
       case 'document':
@@ -280,7 +280,7 @@ export function CreditFlowSimulator({
         return 'text-gray-400';
     }
   };
-  
+
   const getStepStatusIcon = (status: string) => {
     switch (status) {
       case 'success':
@@ -308,15 +308,15 @@ export function CreditFlowSimulator({
               {flowName} - {institutionName}
             </p>
           </div>
-          
-          <button 
+
+          <button
             className="text-gray-400 hover:text-white"
             onClick={onClose}
           >
             <XCircle className="h-6 w-6" />
           </button>
         </div>
-        
+
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
           {simulationState === 'initial' && (
             <div className="text-center py-8">
@@ -335,7 +335,7 @@ export function CreditFlowSimulator({
               </button>
             </div>
           )}
-          
+
           {simulationState === 'running' && (
             <div>
               <div className="mb-6">
@@ -344,16 +344,16 @@ export function CreditFlowSimulator({
                   <span className="text-sm text-white">{currentStepIndex} de {steps.length} etapas</span>
                 </div>
                 <div className="w-full bg-gray-700 rounded-full h-2.5">
-                  <div 
-                    className="bg-purple-600 h-2.5 rounded-full transition-all duration-300" 
+                  <div
+                    className="bg-purple-600 h-2.5 rounded-full transition-all duration-300"
                     style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
                   ></div>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 {steps.map((step, index) => (
-                  <div 
+                  <div
                     key={step.id}
                     className={`p-4 border rounded-lg transition-colors ${
                       index === currentStepIndex - 1
@@ -366,13 +366,13 @@ export function CreditFlowSimulator({
                         <div className={`h-10 w-10 rounded-lg bg-gray-700 flex items-center justify-center ${getStepIconColor(step)}`}>
                           {getStepIcon(step)}
                         </div>
-                        
+
                         <div className="ml-3">
                           <h4 className="text-sm font-medium text-white">{step.name}</h4>
                           <p className="text-xs text-gray-400">{step.description}</p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center">
                         {step.value !== undefined && step.requiredValue !== undefined && (
                           <div className="mr-4 text-right">
@@ -380,15 +380,15 @@ export function CreditFlowSimulator({
                             <p className="text-sm font-medium text-white">{step.value} {step.comparisonOperator} {step.requiredValue}</p>
                           </div>
                         )}
-                        
+
                         {getStepStatusIcon(step.status)}
                       </div>
                     </div>
-                    
+
                     {step.message && (
                       <div className={`mt-3 text-xs p-2 rounded ${
-                        step.status === 'failure' 
-                          ? 'bg-red-900/20 text-red-400' 
+                        step.status === 'failure'
+                          ? 'bg-red-900/20 text-red-400'
                           : step.status === 'warning'
                             ? 'bg-yellow-900/20 text-yellow-400'
                             : 'bg-green-900/20 text-green-400'
@@ -401,43 +401,43 @@ export function CreditFlowSimulator({
               </div>
             </div>
           )}
-          
+
           {simulationState === 'complete' && simulationResult && (
             <div>
               <div className="text-center py-6">
                 <div className={`h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
-                  simulationResult.approved 
-                    ? 'bg-green-500/20 text-green-400' 
+                  simulationResult.approved
+                    ? 'bg-green-500/20 text-green-400'
                     : 'bg-red-500/20 text-red-400'
                 }`}>
-                  {simulationResult.approved 
+                  {simulationResult.approved
                     ? <CheckCircle className="h-8 w-8" />
                     : <XCircle className="h-8 w-8" />
                   }
                 </div>
-                
+
                 <h3 className="text-xl font-medium text-white mb-2">
-                  {simulationResult.approved 
-                    ? 'Avaliação Aprovada!' 
+                  {simulationResult.approved
+                    ? 'Avaliação Aprovada!'
                     : 'Avaliação Não Aprovada'
                   }
                 </h3>
-                
+
                 <p className="text-gray-400 mb-4 max-w-md mx-auto">
                   {simulationResult.message}
                 </p>
-                
+
                 <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-800 mb-6">
                   <span className="text-sm text-gray-400 mr-2">Pontuação:</span>
                   <span className={`text-sm font-medium ${
-                    simulationResult.score > 70 ? 'text-green-400' : 
+                    simulationResult.score > 70 ? 'text-green-400' :
                     simulationResult.score > 40 ? 'text-yellow-400' : 'text-red-400'
                   }`}>
                     {simulationResult.score}/{simulationResult.maxScore}
                   </span>
                 </div>
               </div>
-              
+
               {simulationResult.approved && simulationResult.potentialOfferDetails && (
                 <div className="mb-6">
                   <h4 className="text-sm font-medium text-white mb-3">Oferta Potencial</h4>
@@ -460,7 +460,7 @@ export function CreditFlowSimulator({
                         <p className="text-sm font-medium text-white">{simulationResult.potentialOfferDetails.term}</p>
                       </div>
                     </div>
-                    
+
                     <div className="mt-4 flex justify-end">
                       <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-md transition-colors">
                         Solicitar Esta Oferta
@@ -469,7 +469,7 @@ export function CreditFlowSimulator({
                   </div>
                 </div>
               )}
-              
+
               {!simulationResult.approved && simulationResult.missingRequirements && simulationResult.missingRequirements.length > 0 && (
                 <div className="mb-6">
                   <h4 className="text-sm font-medium text-white mb-3">Requisitos Não Atendidos</h4>
@@ -482,7 +482,7 @@ export function CreditFlowSimulator({
                         </li>
                       ))}
                     </ul>
-                    
+
                     <div className="mt-4 p-3 bg-gray-900/50 rounded-lg">
                       <p className="text-xs text-gray-400">
                         <AlertTriangle className="h-3 w-3 inline mr-1" />
@@ -492,7 +492,7 @@ export function CreditFlowSimulator({
                   </div>
                 </div>
               )}
-              
+
               <div className="flex justify-between">
                 <button
                   className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-md transition-colors"
@@ -501,7 +501,7 @@ export function CreditFlowSimulator({
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Reiniciar Simulação
                 </button>
-                
+
                 <button
                   className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors"
                 >

@@ -242,7 +242,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-white">Documento "Balanço Patrimonial 2023.pdf" verificado</p>
+                  <p className="text-sm text-white">Documento &quot;Balanço Patrimonial 2023.pdf&quot; verificado</p>
                   <p className="text-xs text-gray-400 mt-1">Há 2 horas</p>
                 </div>
               </div>

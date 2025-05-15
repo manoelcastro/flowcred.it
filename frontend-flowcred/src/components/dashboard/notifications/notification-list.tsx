@@ -1,19 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
-import { 
-  Bell, 
-  Shield, 
-  FileText, 
-  Link2, 
-  BarChart3,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  MoreVertical,
-  Check,
-  Trash2
+import {
+    BarChart3,
+    Bell,
+    Check,
+    FileText,
+    Link2,
+    MoreVertical,
+    Shield,
+    Trash2
 } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface Notification {
   id: string;
@@ -34,12 +31,12 @@ interface NotificationListProps {
 
 export function NotificationList({ notifications, onMarkAsRead, onDelete, onAction }: NotificationListProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
-  
+
   const toggleMenu = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setActiveMenu(activeMenu === id ? null : id);
   };
-  
+
   const getIcon = (type: string) => {
     switch (type) {
       case 'access_request':
@@ -54,7 +51,7 @@ export function NotificationList({ notifications, onMarkAsRead, onDelete, onActi
         return <Bell className="h-6 w-6 text-gray-400" />;
     }
   };
-  
+
   const getTimeAgo = (time: string) => {
     // Aqui poderia ter uma lógica para calcular o tempo relativo
     return time;
@@ -72,8 +69,8 @@ export function NotificationList({ notifications, onMarkAsRead, onDelete, onActi
         </div>
       ) : (
         notifications.map((notification) => (
-          <div 
-            key={notification.id} 
+          <div
+            key={notification.id}
             className={`p-4 hover:bg-gray-700/30 transition-colors ${
               !notification.read ? 'bg-gray-800/50' : ''
             }`}
@@ -82,7 +79,7 @@ export function NotificationList({ notifications, onMarkAsRead, onDelete, onActi
               <div className="flex-shrink-0 mt-1">
                 {getIcon(notification.type)}
               </div>
-              
+
               <div className="ml-4 flex-1">
                 <div className="flex justify-between">
                   <p className={`text-sm font-medium ${notification.read ? 'text-gray-300' : 'text-white'}`}>
@@ -92,14 +89,14 @@ export function NotificationList({ notifications, onMarkAsRead, onDelete, onActi
                     <span className="text-xs text-gray-400 mr-2">
                       {getTimeAgo(notification.time)}
                     </span>
-                    
+
                     <button
                       className="p-1 rounded-full text-gray-400 hover:text-white hover:bg-gray-700"
                       onClick={(e) => toggleMenu(notification.id, e)}
                     >
                       <MoreVertical className="h-4 w-4" />
                     </button>
-                    
+
                     {activeMenu === notification.id && (
                       <div className="absolute mt-1 right-6 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-10">
                         <div className="py-1">
@@ -132,11 +129,11 @@ export function NotificationList({ notifications, onMarkAsRead, onDelete, onActi
                     )}
                   </div>
                 </div>
-                
+
                 <p className="mt-1 text-sm text-gray-400">
                   {notification.description}
                 </p>
-                
+
                 {notification.actionable && (
                   <div className="mt-3 flex space-x-3">
                     <button
@@ -157,7 +154,7 @@ export function NotificationList({ notifications, onMarkAsRead, onDelete, onActi
                     )}
                   </div>
                 )}
-                
+
                 {!notification.read && (
                   <div className="absolute top-4 right-4 h-2 w-2 rounded-full bg-blue-500"></div>
                 )}
