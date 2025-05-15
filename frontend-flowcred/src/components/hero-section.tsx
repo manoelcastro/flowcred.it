@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
-import { Suspense, lazy } from 'react';
 import Link from 'next/link';
+import React, { Suspense, lazy, useEffect, useRef } from 'react';
 import { Navbar } from './navbar';
 
 const Spline = lazy(() => import('@splinetool/react-spline'));
@@ -127,14 +126,14 @@ export function HeroSection() {
           </div>
         </div>
       </div>
-
-      <div className="bg-black relative z-10" style={{ marginTop: '-10vh' }}>
+      
+      {/* <div className="bg-black relative z-10" style={{ marginTop: '-10vh' }}>
         <ScreenshotSection screenshotRef={screenshotRef} />
         <div className="container mx-auto px-4 py-16 text-white">
           <h2 className="text-4xl font-bold text-center mb-8">Controle Total dos Seus Dados</h2>
           <p className="text-center max-w-xl mx-auto opacity-80">Compartilhe apenas as informações necessárias, mantendo seus documentos sob sua custódia.</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
