@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
+import { AvaliadorLayout } from '@/components/avaliador/layout/avaliador-layout';
 import {
     BarChart3,
     Calendar,
@@ -277,7 +277,7 @@ export default function FlowsPage() {
   };
 
   return (
-    <DashboardLayout>
+    <AvaliadorLayout>
       <div className="py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-white">Flows de Avaliação</h1>
@@ -360,6 +360,6 @@ export default function FlowsPage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </AvaliadorLayout>
   );
 }

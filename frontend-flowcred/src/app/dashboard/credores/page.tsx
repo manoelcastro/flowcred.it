@@ -1,6 +1,5 @@
 "use client";
 
-import { CreditFlowSimulator } from '@/components/dashboard/credit/credit-flow-simulator';
 import { CreditFlowViewer } from '@/components/dashboard/credit/credit-flow-viewer';
 import { CreditRelationshipCard } from '@/components/dashboard/credit/credit-relationship-card';
 import { CreditSummary } from '@/components/dashboard/credit/credit-summary';
@@ -11,8 +10,7 @@ import { useState } from 'react';
 
 export default function CredoresPage() {
   const [filter, setFilter] = useState('');
-  const [showSimulator, setShowSimulator] = useState(false);
-  const [selectedFlow, setSelectedFlow] = useState<{id: string, name: string, institution: string} | null>(null);
+  // Removida a funcionalidade de simulação que é exclusiva do avaliador
 
   // Dados de exemplo para flows de avaliação
   const creditFlows = [
@@ -301,13 +299,11 @@ export default function CredoresPage() {
     return flow.institution.name.toLowerCase().includes(filter.toLowerCase());
   });
 
-  const handleSimulateFlow = (flowId: string, flowName: string, institutionName: string) => {
-    setSelectedFlow({
-      id: flowId,
-      name: flowName,
-      institution: institutionName
-    });
-    setShowSimulator(true);
+  // Função de visualização de detalhes do flow (sem simulação)
+  const handleViewFlowDetails = (flowId: string) => {
+    // Aqui poderia abrir um modal com mais detalhes sobre o flow,
+    // mas sem a funcionalidade de simulação que é exclusiva do avaliador
+    console.log(`Visualizando detalhes do flow ${flowId}`);
   };
 
   return (
@@ -407,20 +403,13 @@ export default function CredoresPage() {
               <CreditFlowViewer
                 key={flow.id}
                 flow={flow}
-                onSimulate={() => handleSimulateFlow(flow.id, flow.name, flow.institution.name)}
+                onSimulate={() => handleViewFlowDetails(flow.id)}
               />
             ))}
           </div>
         )}
 
-        {showSimulator && selectedFlow && (
-          <CreditFlowSimulator
-            flowId={selectedFlow.id}
-            flowName={selectedFlow.name}
-            institutionName={selectedFlow.institution}
-            onClose={() => setShowSimulator(false)}
-          />
-        )}
+        {/* Removido o simulador que é exclusivo do avaliador */}
       </div>
     </DashboardLayout>
   );

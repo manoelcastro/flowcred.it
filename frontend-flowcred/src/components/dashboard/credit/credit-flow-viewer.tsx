@@ -6,7 +6,6 @@ import {
     ChevronUp,
     Download,
     Info,
-    Play,
     Zap
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -312,12 +311,13 @@ export function CreditFlowViewer({ flow, onSimulate }: CreditFlowViewerProps) {
               Exportar Flow
             </button>
 
+            {/* Botão condicional - mostra "Ver Detalhes" para tomadores e "Simular Avaliação" para avaliadores */}
             <button
               className="flex items-center px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md transition-colors"
               onClick={onSimulate}
             >
-              <Play className="h-4 w-4 mr-2" />
-              Simular Avaliação
+              <Info className="h-4 w-4 mr-2" />
+              {window.location.pathname.startsWith('/avaliador') ? 'Simular Avaliação' : 'Ver Detalhes'}
             </button>
           </div>
         </div>

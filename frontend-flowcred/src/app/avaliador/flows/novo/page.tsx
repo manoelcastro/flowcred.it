@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
+import { AvaliadorLayout } from '@/components/avaliador/layout/avaliador-layout';
 import {
     AlertTriangle,
     BarChart3,
@@ -323,10 +323,10 @@ function FlowEditor() {
 // Página principal do Editor de Flows
 export default function NewFlowPage() {
   return (
-    <DashboardLayout>
+    <AvaliadorLayout>
       <ReactFlowProvider>
         <FlowEditor />
       </ReactFlowProvider>
-    </DashboardLayout>
+    </AvaliadorLayout>
   );
 }

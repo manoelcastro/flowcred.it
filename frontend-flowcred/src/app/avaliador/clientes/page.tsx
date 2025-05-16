@@ -1,6 +1,6 @@
 "use client";
 
-import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
+import { AvaliadorLayout } from '@/components/avaliador/layout/avaliador-layout';
 import {
     ArrowRight,
     BarChart3,
@@ -306,7 +306,7 @@ export default function ClientsPage() {
   });
 
   return (
-    <DashboardLayout>
+    <AvaliadorLayout>
       <div className="py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-white">Clientes</h1>
@@ -405,6 +405,6 @@ export default function ClientsPage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </AvaliadorLayout>
   );
 }
