@@ -1,17 +1,17 @@
 "use client";
 
-import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
+import { AvaliadorLayout } from '@/components/avaliador/layout/avaliador-layout';
 import {
-    AlertTriangle,
-    ArrowRight,
-    BarChart3,
-    CheckCircle,
-    Clock,
-    FileText,
-    GitBranch,
-    Plus,
-    Users,
-    Wallet
+  AlertTriangle,
+  ArrowRight,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  FileText,
+  GitBranch,
+  Plus,
+  Users,
+  Wallet
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -205,7 +205,7 @@ export default function AvaliadorDashboardPage() {
   ];
 
   return (
-    <DashboardLayout>
+    <AvaliadorLayout>
       <div className="py-6">
         <h1 className="text-2xl font-bold text-white mb-6">Visão Geral</h1>
 
@@ -340,6 +340,6 @@ export default function AvaliadorDashboardPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </AvaliadorLayout>
   );
 }
