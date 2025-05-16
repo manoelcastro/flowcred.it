@@ -1,8 +1,0 @@
-src/app/avaliador/flows/novo/page.tsx
-src/app/avaliador/flows/page.tsx
-src/components/dashboard/consent/access-requests.tsx
-src/components/dashboard/consent/consent-management.tsx
-src/components/dashboard/credit/credit-relationship-card.tsx
-src/components/dashboard/integrations/integration-cards.tsx
-src/components/ui/fluid-particle.tsx
-src/components/user-profiles-section.tsx
