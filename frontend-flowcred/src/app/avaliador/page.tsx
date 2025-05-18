@@ -1,19 +1,23 @@
 "use client";
 
 import { AvaliadorLayout } from '@/components/avaliador/layout/avaliador-layout';
+import { useModal } from '@/lib/providers/ModalContext';
+import { useWallet } from '@/lib/providers/WalletContext';
 import {
-    AlertTriangle,
-    ArrowRight,
-    BarChart3,
-    CheckCircle,
-    Clock,
-    FileText,
-    GitBranch,
-    Plus,
-    Users,
-    Wallet
+  AlertTriangle,
+  ArrowRight,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  FileText,
+  GitBranch,
+  Plus,
+  Users,
+  Wallet
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 // Componente de Card Métrica
 interface MetricCardProps {

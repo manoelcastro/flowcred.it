@@ -64,7 +64,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
             const currentChain = supportedChains.find(c => c.id === parseInt(chainId, 16)) || mainnet;
 
             const client = createWalletClient({
-              chain: currentChain,
+              chain: anvilChain,
               transport: custom(window.ethereum)
             });
 

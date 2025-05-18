@@ -1,8 +1,12 @@
+'use client';
+
+import { anvilChain } from '@/lib/anvil-chain';
 import FlowCredIdentityABI from '@/lib/contracts/abis/FlowCredIdentity.json';
 import { IDENTITY_CONTRACT_ADDRESS } from '@/lib/contracts/addresses';
 import { pinataSDKService } from '@/lib/ipfs/pinataSDKService';
 import { v4 as uuidv4 } from 'uuid';
 import { Address, createPublicClient, createWalletClient, custom, http } from 'viem';
+import { didService } from './didService';
 
 export type UserRole = 'tomador' | 'avaliador' | 'both';
 
@@ -35,13 +39,20 @@ const enumToRole = {
  */
 export class IdentityService {
   /**
-   * Gera um DID para um usuário
+   * Gera um DID para um usuário usando Veramo
    * @param address Endereço da carteira do usuário
    * @returns DID gerado
    */
-  generateDID(address: string): string {
-    // Formato simples de DID: did:flowcred:{address}:{uuid}
-    return `did:flowcred:${address.toLowerCase()}:${uuidv4()}`;
+  async generateDID(address: string): Promise<string> {
+    try {
+      // Usar o serviço de DIDs para criar um DID com Veramo
+      const didInfo = await didService.createDID(address);
+      return didInfo.did;
+    } catch (error) {
+      console.error('Error generating DID with Veramo:', error);
+      // Fallback para o método simples se o Veramo falhar
+      return `did:flowcred:${address.toLowerCase()}:${uuidv4()}`;
+    }
   }
 
   /**
@@ -51,8 +62,8 @@ export class IdentityService {
    */
   async registerUser(profile: UserProfile): Promise<string> {
     try {
-      // Gerar DID se não fornecido
-      const did = profile.did || this.generateDID(profile.address);
+      // Gerar DID com Veramo se não fornecido
+      const did = profile.did || await this.generateDID(profile.address);
 
       // Adicionar timestamps
       const now = Date.now();
@@ -71,19 +82,56 @@ export class IdentityService {
 
       // 2. Registrar no contrato
       if (typeof window !== 'undefined' && window.ethereum) {
-        const walletClient = createWalletClient({
-          chain: anvilChain,
-          transport: custom(window.ethereum)
-        });
+        try {
+          // Verificar a chain atual
+          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+          const currentChainId = parseInt(chainId, 16);
 
-        const { request } = await walletClient.writeContract({
-          address: IDENTITY_CONTRACT_ADDRESS as Address,
-          abi: FlowCredIdentityABI,
-          functionName: 'registerUser',
-          args: [did, ipfsHash, roleToEnum[profile.role]]
-        });
+          // Se não estiver na Anvil, solicitar a mudança
+          if (currentChainId !== anvilChain.id) {
+            try {
+              // Tentar mudar para a rede Anvil
+              await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: `0x${anvilChain.id.toString(16)}` }],
+              });
+            } catch (switchError: any) {
+              // Se a rede não estiver adicionada na carteira
+              if (switchError.code === 4902) {
+                await window.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [
+                    {
+                      chainId: `0x${anvilChain.id.toString(16)}`,
+                      chainName: anvilChain.name,
+                      nativeCurrency: anvilChain.nativeCurrency,
+                      rpcUrls: [anvilChain.rpcUrls.default.http[0]],
+                    },
+                  ],
+                });
+              } else {
+                throw switchError;
+              }
+            }
+          }
 
-        const hash = await walletClient.writeContract(request);
+          // Criar cliente com a chain correta
+          const walletClient = createWalletClient({
+            chain: anvilChain,
+            transport: custom(window.ethereum)
+          });
+
+          await walletClient.writeContract({
+            address: IDENTITY_CONTRACT_ADDRESS as Address,
+            abi: FlowCredIdentityABI,
+            functionName: 'registerUser',
+            args: [did, ipfsHash, roleToEnum[profile.role]],
+            account: await walletClient.getAddresses().then(addresses => addresses[0])
+          });
+        } catch (error) {
+          console.error('Erro ao mudar de rede ou registrar usuário:', error);
+          throw error;
+        }
 
         // Salvar no localStorage para acesso rápido
         localStorage.setItem(`flowcred-profile-${profile.address}`, JSON.stringify({
@@ -122,19 +170,56 @@ export class IdentityService {
 
       // 2. Atualizar no contrato
       if (typeof window !== 'undefined' && window.ethereum) {
-        const walletClient = createWalletClient({
-          chain: anvilChain,
-          transport: custom(window.ethereum)
-        });
+        try {
+          // Verificar a chain atual
+          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+          const currentChainId = parseInt(chainId, 16);
 
-        const { request } = await walletClient.writeContract({
-          address: IDENTITY_CONTRACT_ADDRESS as Address,
-          abi: FlowCredIdentityABI,
-          functionName: 'updateProfile',
-          args: [ipfsHash, roleToEnum[profile.role]]
-        });
+          // Se não estiver na Anvil, solicitar a mudança
+          if (currentChainId !== anvilChain.id) {
+            try {
+              // Tentar mudar para a rede Anvil
+              await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: `0x${anvilChain.id.toString(16)}` }],
+              });
+            } catch (switchError: any) {
+              // Se a rede não estiver adicionada na carteira
+              if (switchError.code === 4902) {
+                await window.ethereum.request({
+                  method: 'wallet_addEthereumChain',
+                  params: [
+                    {
+                      chainId: `0x${anvilChain.id.toString(16)}`,
+                      chainName: anvilChain.name,
+                      nativeCurrency: anvilChain.nativeCurrency,
+                      rpcUrls: [anvilChain.rpcUrls.default.http[0]],
+                    },
+                  ],
+                });
+              } else {
+                throw switchError;
+              }
+            }
+          }
 
-        const hash = await walletClient.writeContract(request);
+          // Criar cliente com a chain correta
+          const walletClient = createWalletClient({
+            chain: anvilChain,
+            transport: custom(window.ethereum)
+          });
+
+          await walletClient.writeContract({
+            address: IDENTITY_CONTRACT_ADDRESS as Address,
+            abi: FlowCredIdentityABI,
+            functionName: 'updateProfile',
+            args: [ipfsHash, roleToEnum[profile.role]],
+            account: await walletClient.getAddresses().then(addresses => addresses[0])
+          });
+        } catch (error) {
+          console.error('Erro ao mudar de rede ou atualizar perfil:', error);
+          throw error;
+        }
 
         // Atualizar no localStorage
         localStorage.setItem(`flowcred-profile-${profile.address}`, JSON.stringify({
@@ -172,12 +257,12 @@ export class IdentityService {
           transport: http('http://localhost:8545')
         });
 
-        const [did, ipfsHash, role, registeredAt, updatedAt, isActive] = await publicClient.readContract({
+        const [did, ipfsHash, role, registeredAt, updatedAt, isActive] = (await publicClient.readContract({
           address: IDENTITY_CONTRACT_ADDRESS as Address,
           abi: FlowCredIdentityABI,
           functionName: 'getUserProfile',
           args: [address as Address]
-        });
+        })) as [string, string, number, string, string, boolean];
 
         // Se o usuário não estiver registrado ou estiver inativo
         if (!did || !isActive) {
@@ -227,12 +312,14 @@ export class IdentityService {
           transport: http('http://localhost:8545')
         });
 
-        return await publicClient.readContract({
+        const result = await publicClient.readContract({
           address: IDENTITY_CONTRACT_ADDRESS as Address,
           abi: FlowCredIdentityABI,
           functionName: 'isTomador',
           args: [address as Address]
         });
+
+        return Boolean(result);
       }
 
       return false;
@@ -255,12 +342,14 @@ export class IdentityService {
           transport: http('http://localhost:8545')
         });
 
-        return await publicClient.readContract({
+        const result = await publicClient.readContract({
           address: IDENTITY_CONTRACT_ADDRESS as Address,
           abi: FlowCredIdentityABI,
           functionName: 'isAvaliador',
           args: [address as Address]
         });
+
+        return Boolean(result);
       }
 
       return false;
@@ -272,4 +361,4 @@ export class IdentityService {
 }
 
 // Exportar uma instância do serviço para uso em toda a aplicação
-export const identityService = new IdentityService();
+export const identityService = new IdentityService()

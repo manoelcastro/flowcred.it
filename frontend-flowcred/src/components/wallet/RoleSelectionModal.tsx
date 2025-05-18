@@ -91,6 +91,7 @@ export function RoleSelectionModal() {
       // Importar serviços
       const { identityService } = await import('@/services/identityService');
       const { vcService } = await import('@/services/vcService');
+      const { didService } = await import('@/services/didService');
 
       // Criar perfil do usuário
       const userProfile = {
@@ -100,6 +101,10 @@ export function RoleSelectionModal() {
         role: selectedRole
       };
 
+      // Criar DID para o usuário usando Veramo
+      const didInfo = await didService.createDID(address);
+      userProfile.did = didInfo.did;
+
       // Registrar usuário no contrato e IPFS
       const ipfsHash = await identityService.registerUser(userProfile);
 
@@ -107,12 +112,14 @@ export function RoleSelectionModal() {
       const registeredProfile = await identityService.getUserProfile(address);
 
       if (registeredProfile && registeredProfile.did) {
-        // Emitir VC de papel
-        await vcService.issueRoleCredential(
+        // Emitir VC de papel usando Veramo
+        const { credentialId } = await vcService.issueRoleCredential(
           registeredProfile.did,
           selectedRole,
           address
         );
+
+        console.log(`Credencial emitida com sucesso: ${credentialId}`);
       }
 
       // Atualizar contexto

@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from 'react';
-import { Wallet, LogOut, ChevronDown, ExternalLink } from 'lucide-react';
-import { useWallet } from '@/lib/providers/WalletContext';
 import { useModal } from '@/lib/providers/ModalContext';
+import { useWallet } from '@/lib/providers/WalletContext';
+import { ChevronDown, ExternalLink, LogOut, Wallet } from 'lucide-react';
+import { useState } from 'react';
 
 export function WalletConnectButton() {
-  const { isConnected, isConnecting, address, userProfile, connectWallet, disconnectWallet, error, chain } = useWallet();
+  const { isConnected, isConnecting, address, userProfile, connectWallet, disconnectWallet, error, chain, switchChain } = useWallet();
   const { openModal } = useModal();
   const [showDropdown, setShowDropdown] = useState(false);
+
+  // Importar a chain Anvil
+  const anvilChain = {
+    id: 31337,
+    name: 'Anvil',
+  };
 
   const handleConnect = async () => {
     try {
@@ -100,6 +106,25 @@ export function WalletConnectButton() {
               <ExternalLink size={16} />
               Ver no Explorador
             </a>
+
+            {/* Botão para mudar para a rede Anvil */}
+            {chain && chain.id !== anvilChain.id && (
+              <button
+                onClick={async () => {
+                  try {
+                    await switchChain(anvilChain.id);
+                    setShowDropdown(false);
+                  } catch (error) {
+                    console.error('Erro ao mudar para Anvil:', error);
+                  }
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-400 hover:bg-gray-700 rounded-md transition-colors"
+              >
+                <ExternalLink size={16} />
+                Mudar para Anvil
+              </button>
+            )}
+
             <button
               onClick={() => {
                 disconnectWallet();
