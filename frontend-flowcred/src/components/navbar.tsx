@@ -1,8 +1,7 @@
 "use client";
-
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { RegisterButton } from './register-button';
+import { WalletConnectButton } from './wallet/WalletConnectButton';
 
 export function Navbar() {
   const [hoveredNavItem, setHoveredNavItem] = useState<string | null>(null);
@@ -110,17 +109,18 @@ export function Navbar() {
 
         <div className="flex items-center space-x-4 md:space-x-6">
           <a href="#" className="hidden md:block text-gray-300 hover:text-white text-sm">Fale Conosco</a>
-          <Link href="/login" className="hidden sm:block text-gray-300 hover:text-white text-sm">Entrar</Link>
-          <RegisterButton />
+          <div className="hidden sm:block">
+            <WalletConnectButton />
+          </div>
           <button className="lg:hidden text-white p-2" onClick={toggleMobileMenu} aria-label="Toggle mobile menu">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
           </button>
         </div>
       </div>
 
-      <div className={`lg:hidden bg-black bg-opacity-50 border-t border-gray-700/30 absolute top-full left-0 right-0 z-30 
-           overflow-hidden transition-all duration-300 ease-in-out 
-           ${isMobileMenuOpen ? 'max-h-screen opacity-100 pointer-events-auto' : 'max-h-0 opacity-0 pointer-events-none'} 
+      <div className={`lg:hidden bg-black bg-opacity-50 border-t border-gray-700/30 absolute top-full left-0 right-0 z-30
+           overflow-hidden transition-all duration-300 ease-in-out
+           ${isMobileMenuOpen ? 'max-h-screen opacity-100 pointer-events-auto' : 'max-h-0 opacity-0 pointer-events-none'}
            `}
         style={{ backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
       >
@@ -159,7 +159,10 @@ export function Navbar() {
           </div>
           <a href="#" className="text-gray-300 hover:text-gray-100 text-sm py-2 transition duration-150" onClick={toggleMobileMenu}>Planos</a>
           <a href="#" className="text-gray-300 hover:text-gray-100 text-sm py-2 transition duration-150" onClick={toggleMobileMenu}>Fale Conosco</a>
-          <Link href="/login" className="text-gray-300 hover:text-gray-100 text-sm py-2 transition duration-150" onClick={toggleMobileMenu}>Entrar</Link>
+          <div className="py-2">
+            {/* @ts-ignore */}
+            <WalletConnectButton />
+          </div>
         </div>
       </div>
     </nav>
