@@ -1,6 +1,6 @@
 import FlowCredIdentityABI from '@/lib/contracts/abis/FlowCredIdentity.json';
 import { IDENTITY_CONTRACT_ADDRESS } from '@/lib/contracts/addresses';
-import { pinataService } from '@/lib/ipfs/pinataService';
+import { pinataSDKService } from '@/lib/ipfs/pinataSDKService';
 import { v4 as uuidv4 } from 'uuid';
 import { Address, createPublicClient, createWalletClient, custom, http } from 'viem';
 
@@ -64,7 +64,7 @@ export class IdentityService {
       };
 
       // 1. Armazenar perfil no IPFS
-      const ipfsHash = await pinataService.pinJSON(
+      const ipfsHash = await pinataSDKService.pinJSON(
         profileWithTimestamps,
         `user-${profile.address.slice(0, 8)}`
       );
@@ -115,7 +115,7 @@ export class IdentityService {
       };
 
       // 1. Armazenar perfil atualizado no IPFS
-      const ipfsHash = await pinataService.pinJSON(
+      const ipfsHash = await pinataSDKService.pinJSON(
         profileWithTimestamp,
         `user-${profile.address.slice(0, 8)}-update`
       );
@@ -185,7 +185,7 @@ export class IdentityService {
         }
 
         // Obter dados completos do IPFS
-        const profileData = await pinataService.getJSON(ipfsHash);
+        const profileData = await pinataSDKService.getJSON(ipfsHash);
 
         // Criar objeto de perfil
         const profile: UserProfile = {

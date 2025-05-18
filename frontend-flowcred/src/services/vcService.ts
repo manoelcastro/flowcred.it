@@ -1,6 +1,6 @@
 import FlowCredVCRegistryABI from '@/lib/contracts/abis/FlowCredVCRegistry.json';
 import { VC_REGISTRY_CONTRACT_ADDRESS } from '@/lib/contracts/addresses';
-import { pinataService } from '@/lib/ipfs/pinataService';
+import { pinataSDKService } from '@/lib/ipfs/pinataSDKService';
 import { v4 as uuidv4 } from 'uuid';
 import { Address, createPublicClient, createWalletClient, custom, http } from 'viem';
 import { UserRole } from './identityService';
@@ -56,7 +56,7 @@ export class VCService {
       };
 
       // Armazenar VC no IPFS
-      const ipfsHash = await pinataService.pinJSON(
+      const ipfsHash = await pinataSDKService.pinJSON(
         credential,
         `vc-role-${address.slice(0, 8)}`
       );
@@ -155,7 +155,7 @@ export class VCService {
           if (isRevoked) continue;
 
           // Obter dados completos do IPFS
-          const credential = await pinataService.getJSON(ipfsHash as string);
+          const credential = await pinataSDKService.getJSON(ipfsHash as string);
           credentials.push(credential);
         }
 
