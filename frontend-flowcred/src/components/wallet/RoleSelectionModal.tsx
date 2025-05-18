@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { X } from 'lucide-react';
-import { UserRole, useWallet } from '@/lib/providers/WalletContext';
 import { useModal } from '@/lib/providers/ModalContext';
+import { UserRole, useWallet } from '@/lib/providers/WalletContext';
+import { X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 export function RoleSelectionModal() {
   const { address, setUserProfile } = useWallet();
   const { isModalOpen, closeModal } = useModal();
   const router = useRouter();
-  
+
   const [selectedRole, setSelectedRole] = useState<UserRole>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -88,6 +88,10 @@ export function RoleSelectionModal() {
     setIsSubmitting(true);
 
     try {
+      // Importar serviços
+      const { identityService } = await import('@/services/identityService');
+      const { vcService } = await import('@/services/vcService');
+
       // Criar perfil do usuário
       const userProfile = {
         address,
@@ -96,8 +100,23 @@ export function RoleSelectionModal() {
         role: selectedRole
       };
 
-      // Atualizar contexto e salvar no localStorage
-      setUserProfile(userProfile);
+      // Registrar usuário no contrato e IPFS
+      const ipfsHash = await identityService.registerUser(userProfile);
+
+      // Obter o perfil completo com DID
+      const registeredProfile = await identityService.getUserProfile(address);
+
+      if (registeredProfile && registeredProfile.did) {
+        // Emitir VC de papel
+        await vcService.issueRoleCredential(
+          registeredProfile.did,
+          selectedRole,
+          address
+        );
+      }
+
+      // Atualizar contexto
+      setUserProfile(registeredProfile || userProfile);
 
       // Redirecionar com base no perfil selecionado
       if (selectedRole === 'avaliador') {
@@ -108,7 +127,9 @@ export function RoleSelectionModal() {
 
       closeModal('roleSelection');
     } catch (error) {
-      console.error('Erro ao salvar perfil do usuário:', error);
+      console.error('Erro ao registrar usuário:', error);
+      // Mostrar mensagem de erro ao usuário
+      alert(`Erro ao registrar usuário: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     } finally {
       setIsSubmitting(false);
     }

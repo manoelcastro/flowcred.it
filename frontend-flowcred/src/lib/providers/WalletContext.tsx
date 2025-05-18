@@ -1,15 +1,18 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { createWalletClient, custom, WalletClient, Chain, getAccount, Address } from 'viem';
-import { mainnet, polygon, optimism } from 'viem/chains';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { Chain, createWalletClient, custom, WalletClient } from 'viem';
+import { mainnet, optimism, polygon } from 'viem/chains';
 import { useModal } from './ModalContext';
 
 // Tipos de roles disponíveis
-export type UserRole = 'avaliador' | 'tomador' | null;
+export type UserRole = 'avaliador' | 'tomador' | 'both' | null;
+
+// Importar a chain Anvil
+import { anvilChain } from '../anvil-chain';
 
 // Cadeias suportadas pela aplicação
-const supportedChains: Chain[] = [mainnet, polygon, optimism];
+const supportedChains: Chain[] = [anvilChain, mainnet, polygon, optimism];
 
 // Interface para o perfil do usuário
 interface UserProfile {
@@ -54,22 +57,22 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         // Verificar se ethereum está disponível
         if (typeof window !== 'undefined' && window.ethereum) {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-          
+
           if (accounts && accounts.length > 0) {
             // Obter a chain atual
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
             const currentChain = supportedChains.find(c => c.id === parseInt(chainId, 16)) || mainnet;
-            
+
             const client = createWalletClient({
               chain: currentChain,
               transport: custom(window.ethereum)
             });
-            
+
             setWalletClient(client);
             setAddress(accounts[0]);
             setIsConnected(true);
             setChain(currentChain);
-            
+
             // Carregar perfil do usuário do localStorage se existir
             const savedProfile = localStorage.getItem(`flowcred-profile-${accounts[0]}`);
             if (savedProfile) {
@@ -96,7 +99,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         } else if (accounts[0] !== address) {
           // Conta mudou
           setAddress(accounts[0]);
-          
+
           // Carregar perfil para a nova conta se existir
           const savedProfile = localStorage.getItem(`flowcred-profile-${accounts[0]}`);
           if (savedProfile) {
@@ -113,27 +116,31 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       const handleChainChanged = (chainId: string) => {
         const newChainId = parseInt(chainId, 16);
         const newChain = supportedChains.find(c => c.id === newChainId) || mainnet;
-        
+
         setChain(newChain);
-        
+
         // Atualizar o cliente da carteira com a nova chain
         if (window.ethereum) {
           const client = createWalletClient({
             chain: newChain,
             transport: custom(window.ethereum)
           });
-          
+
           setWalletClient(client);
         }
       };
 
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleChainChanged);
-      
-      return () => {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
-      };
+      if (window.ethereum) {
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+        window.ethereum.on('chainChanged', handleChainChanged);
+
+        return () => {
+          if (window.ethereum) {
+            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+            window.ethereum.removeListener('chainChanged', handleChainChanged);
+          }
+        };
+      }
     }
   }, [address, openModal]);
 
@@ -141,28 +148,28 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const connectWallet = async () => {
     setIsConnecting(true);
     setError(null);
-    
+
     try {
       if (typeof window !== 'undefined' && window.ethereum) {
-        const accounts = await window.ethereum.request({ 
-          method: 'eth_requestAccounts' 
+        const accounts = await window.ethereum.request({
+          method: 'eth_requestAccounts'
         });
-        
+
         if (accounts && accounts.length > 0) {
           // Obter a chain atual
           const chainId = await window.ethereum.request({ method: 'eth_chainId' });
           const currentChain = supportedChains.find(c => c.id === parseInt(chainId, 16)) || mainnet;
-          
+
           const client = createWalletClient({
             chain: currentChain,
             transport: custom(window.ethereum)
           });
-          
+
           setWalletClient(client);
           setAddress(accounts[0]);
           setIsConnected(true);
           setChain(currentChain);
-          
+
           // Carregar perfil do usuário se existir
           const savedProfile = localStorage.getItem(`flowcred-profile-${accounts[0]}`);
           if (savedProfile) {
@@ -171,7 +178,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
             // Abrir modal de seleção de perfil
             openModal('roleSelection');
           }
-          
+
           return accounts[0];
         }
       } else {
@@ -195,12 +202,61 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   };
 
   // Função para atualizar perfil do usuário
-  const updateUserProfile = (profile: UserProfile) => {
-    setUserProfile(profile);
-    
-    // Salvar no localStorage para persistência
-    if (profile.address) {
-      localStorage.setItem(`flowcred-profile-${profile.address}`, JSON.stringify(profile));
+  const updateUserProfile = async (profile: UserProfile) => {
+    try {
+      // Importar serviço de identidade
+      const { identityService } = await import('@/services/identityService');
+      const { vcService } = await import('@/services/vcService');
+
+      // Verificar se o usuário já está registrado
+      const existingProfile = await identityService.getUserProfile(profile.address);
+
+      // Garantir que o papel não seja null
+      if (!profile.role) {
+        throw new Error('Role cannot be null');
+      }
+
+      // Converter para o tipo esperado pelo serviço
+      const serviceProfile = {
+        ...profile,
+        role: profile.role as 'tomador' | 'avaliador' | 'both'
+      };
+
+      if (existingProfile) {
+        // Atualizar perfil existente
+        await identityService.updateUserProfile(serviceProfile);
+
+        // Se o papel mudou, emitir nova VC
+        if (existingProfile.role !== profile.role && existingProfile.did && profile.role) {
+          await vcService.issueRoleCredential(
+            existingProfile.did,
+            profile.role as 'tomador' | 'avaliador' | 'both',
+            profile.address
+          );
+        }
+      } else {
+        // Registrar novo usuário
+        await identityService.registerUser(serviceProfile);
+      }
+
+      // Obter perfil atualizado
+      const updatedProfile = await identityService.getUserProfile(profile.address);
+
+      // Atualizar estado
+      if (updatedProfile) {
+        setUserProfile(updatedProfile as UserProfile);
+      } else {
+        setUserProfile(profile);
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar perfil do usuário:', error);
+
+      // Fallback: salvar apenas no localStorage
+      setUserProfile(profile);
+
+      if (profile.address) {
+        localStorage.setItem(`flowcred-profile-${profile.address}`, JSON.stringify(profile));
+      }
     }
   };
 
@@ -217,8 +273,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       // Se a chain não está adicionada na carteira
       if (error.code === 4902) {
         const targetChain = supportedChains.find(c => c.id === chainId);
-        
-        if (targetChain) {
+
+        if (targetChain && window.ethereum) {
           try {
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
@@ -268,10 +324,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 // Hook para usar o contexto da carteira
 export function useWallet() {
   const context = useContext(WalletContext);
-  
+
   if (context === undefined) {
     throw new Error('useWallet must be used within a WalletProvider');
   }
-  
+
   return context;
 }
