@@ -160,7 +160,6 @@ export function Navbar() {
           <a href="#" className="text-gray-300 hover:text-gray-100 text-sm py-2 transition duration-150" onClick={toggleMobileMenu}>Planos</a>
           <a href="#" className="text-gray-300 hover:text-gray-100 text-sm py-2 transition duration-150" onClick={toggleMobileMenu}>Fale Conosco</a>
           <div className="py-2">
-            {/* @ts-ignore */}
             <WalletConnectButton />
           </div>
         </div>

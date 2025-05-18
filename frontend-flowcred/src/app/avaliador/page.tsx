@@ -2,16 +2,16 @@
 
 import { AvaliadorLayout } from '@/components/avaliador/layout/avaliador-layout';
 import {
-  AlertTriangle,
-  ArrowRight,
-  BarChart3,
-  CheckCircle,
-  Clock,
-  FileText,
-  GitBranch,
-  Plus,
-  Users,
-  Wallet
+    AlertTriangle,
+    ArrowRight,
+    BarChart3,
+    CheckCircle,
+    Clock,
+    FileText,
+    GitBranch,
+    Plus,
+    Users,
+    Wallet
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -142,7 +142,33 @@ function CreditRequest({ id, client, requestedAt, amount, status }: CreditReques
   );
 }
 
+
 export default function AvaliadorDashboardPage() {
+  const { isConnected, userProfile } = useWallet();
+  const { openModal } = useModal();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Se não está conectado, redirecionar para a página inicial
+    if (!isConnected) {
+      router.push('/');
+      return;
+    }
+
+    // Se está conectado mas não tem perfil, abrir modal de seleção de perfil
+    if (isConnected && !userProfile) {
+      openModal('roleSelection');
+      return;
+    }
+
+    // Se o usuário tem um papel diferente do requerido, redirecionar para o dashboard correto
+    if (userProfile && userProfile.role !== 'avaliador') {
+      if (userProfile.role === 'tomador') {
+        router.push('/dashboard');
+      }
+    }
+  }, [isConnected, userProfile, router, openModal]);
+
   // Dados de exemplo para métricas
   const metrics = [
     {

@@ -6,16 +6,44 @@ import { DocumentList } from '@/components/dashboard/documents/document-list';
 import { DashboardLayout } from '@/components/dashboard/layout/dashboard-layout';
 import { MetricCard } from '@/components/dashboard/metrics/metric-card';
 import { MetricsProgress } from '@/components/dashboard/metrics/metrics-progress';
+import { useModal } from '@/lib/providers/ModalContext';
+import { useWallet } from '@/lib/providers/WalletContext';
 import {
-    BarChart3,
-    Building,
-    FileText,
-    Shield,
-    Wallet
+  BarChart3,
+  Building,
+  FileText,
+  Shield,
+  Wallet
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function DashboardPage() {
+  const { isConnected, userProfile } = useWallet();
+  const { openModal } = useModal();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Se não está conectado, redirecionar para a página inicial
+    if (!isConnected) {
+      router.push('/');
+      return;
+    }
+
+    // Se está conectado mas não tem perfil, abrir modal de seleção de perfil
+    if (isConnected && !userProfile) {
+      openModal('roleSelection');
+      return;
+    }
+
+    // Se o usuário tem um papel diferente do requerido, redirecionar para o dashboard correto
+    if (userProfile && userProfile.role !== 'tomador') {
+      if (userProfile.role === 'avaliador') {
+        router.push('/avaliador');
+      }
+    }
+  }, [isConnected, userProfile, router, openModal]);
   // Dados de exemplo para métricas
   const metrics = [
     {
