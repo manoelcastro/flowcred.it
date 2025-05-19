@@ -1,0 +1,113 @@
+{
+  "razao_social": "Empresa Exemplo S.A.",
+  "nome_fantasia": "ExemploEmp",
+  "cnpj": "12.345.678/0001-99",
+  "tipo_societario": "Sociedade Anônima",
+  "data_constituicao": "2010-05-15",
+  "prazo_duracao": "Indeterminado",
+  "socios": [
+    {
+      "nome_completo": "João da Silva",
+      "nacionalidade": "Brasileiro",
+      "estado_civil": "Casado",
+      "profissao": "Empresário",
+      "endereco": "Rua A, 123, São Paulo, SP",
+      "cpf": "123.456.789-00",
+      "percentual_participacao": 60.0,
+      "regime_bens": "Comunhão parcial",
+      "quantidade_quotas": 600,
+      "valor_quotas": 1.0
+    },
+    {
+      "nome_completo": "Maria Oliveira",
+      "nacionalidade": "Brasileira",
+      "estado_civil": "Solteira",
+      "profissao": "Advogada",
+      "endereco": "Av. B, 456, Rio de Janeiro, RJ",
+      "cpf": "987.654.321-00",
+      "percentual_participacao": 40.0,
+      "regime_bens": "Separação total",
+      "quantidade_quotas": 400,
+      "valor_quotas": 1.0
+    }
+  ],
+  "capital_social": {
+    "valor_total": 1000000.0,
+    "valor_integralizado": 800000.0,
+    "valor_a_integralizar": 200000.0,
+    "data_integralizacao": "2010-05-20",
+    "quantidade_total_quotas": 1000,
+    "valor_nominal_quota": 1.0,
+    "forma_integralizacao": "Dinheiro"
+  },
+  "objeto_social": {
+    "descricao_completa": "Atuação na comercialização e distribuição de produtos eletrônicos, prestação de serviços de tecnologia da informação e consultoria empresarial.",
+    "cnae_principal": "4651-3/00",
+    "cnae_secundarios": [
+      "6201-5/01",
+      "6311-9/00"
+    ],
+    "restricoes_atividades": "Restrições para atividades financeiras sem autorização regulatória",
+    "condicoes_novas_atividades": "Abertura para novas linhas de negócio mediante aprovação dos sócios majoritários"
+  },
+  "governanca": {
+    "administradores": [
+      {
+        "nome_completo": "Carlos Pereira",
+        "cargo": "Diretor Executivo",
+        "poderes": "Administração geral com poderes de representação legal e operacional. Decisões acima de R$1.000.000 exigem aprovação do conselho.",
+        "restricoes": "Decisões de alto valor requerem co-participação do conselho de administração.",
+        "prazo_mandato": "5 anos",
+        "e_socio": true
+      }
+    ],
+    "limites_alcada": "Decisões acima de R$500.000 requerem aprovação do conselho",
+    "regras_aprovacao": "Assembleia com maioria simples das quotas",
+    "quorum_deliberacoes": "Mais de 50% das quotas totais",
+    "regras_reunioes": "Reuniões trimestrais obrigatórias e extraordinárias conforme necessidade"
+  },
+  "cessao_transferencia": {
+    "regras_cessao": "Cessão de quotas somente com aprovação dos demais sócios e registro em ata",
+    "direito_preferencia": true,
+    "prazo_preferencia": 30,
+    "restricoes_transferencia": "Transferência idealizada somente para partes homologadas e com notificação aos sócios",
+    "clausula_tag_along": true,
+    "clausula_drag_along": true
+  },
+  "localizacao": {
+    "endereco_sede": "Avenida Central, 1000, Capital, Estado",
+    "enderecos_filiais": [
+      "Rua Secundária, 200, Cidade A",
+      "Estrada Municipal, 300, Cidade B"
+    ],
+    "foro_eleicao": "São Paulo - SP",
+    "clausula_arbitragem": true,
+    "camara_arbitral": "Câmara de Arbitragem Empresarial - FGV"
+  },
+  "historico_alteracoes": [
+    {
+      "data": "2015-06-30",
+      "numero_alteracao": "001",
+      "teor": "Inclusão de novo sócio e alteração no objeto social para contemplar atividades no setor de TI, visando a diversificação dos investimentos.",
+      "motivo": "Expansão estratégica dos negócios e necessidade de atualização das atividades empresariais.",
+      "registro_junta": "123456789"
+    }
+  ],
+  "distribuicao_lucros": {
+    "regras_distribuicao": "Distribuição trimestral dos lucros proporcional à participação dos sócios, após reserva legal e reinvestimentos estratégicos.",
+    "percentual_distribuicao": 40.0,
+    "periodicidade": "Trimestral",
+    "constituicao_reservas": "Reserva legal de 5% do lucro líquido para contingências e investimentos futuros",
+    "garantias_socios": "Garantia de direito a voto e prioridade na distribuição de dividendos",
+    "garantias_empresa": "Reinvestimento de parte dos lucros para manutenção e crescimento do capital social"
+  },
+  "observacoes_adicionais": "A análise integrada evidenciou riscos jurídicos, financeiros, operacionais e reputacionais. Recomenda-se a implementação de cláusulas de arbitragem, atualização periódica dos atos societários e auditoria contínua dos indicadores financeiros e operacionais para garantir a aderência às melhores práticas de governança e mitigar riscos emergentes.",
+  "pontos_atencao": [
+    "Histórico de alterações contratuais e potenciais disputas societárias",
+    "Risco regulatório e necessidade de atualização dos atos constitutivos",
+    "Deterioração dos indicadores financeiros em comparação a benchmarks setoriais",
+    "Ineficiências operacionais que podem aumentar custos",
+    "Riscos reputacionais decorrentes de litígios e falhas de compliance"
+  ],
+  "data_analise": "2023-10-06"
+}

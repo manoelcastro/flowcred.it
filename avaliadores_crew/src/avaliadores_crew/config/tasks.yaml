@@ -1,0 +1,123 @@
+document_analysis_task:
+  description: >
+    Analise detalhadamente o documento empresarial fornecido ({document_type}) localizado em {document_path}.
+    Utilize a ferramenta TextSearchTool para extrair o conteúdo de arquivos de texto (.txt) ou as ferramentas
+    de busca em documentos (PDFSearchTool, DOCXSearchTool, etc.) para outros formatos.
+
+    Extraia todas as informações críticas seguindo estas diretrizes:
+
+    Para Contratos Sociais:
+    - Identifique razão social, CNPJ e data de constituição
+    - Mapeie a composição societária completa com participações
+    - Analise o capital social, sua integralização e eventuais pendências
+    - Identifique poderes de administração e limitações de alçada
+    - Detecte cláusulas restritivas, golden shares e acordos especiais
+
+    Para Balanços Patrimoniais e DREs:
+    - Verifique consistência entre demonstrações financeiras
+    - Calcule e interprete indicadores financeiros chave
+    - Identifique tendências e anomalias nas séries históricas
+    - Detecte possíveis passivos ocultos ou contingências não declaradas
+    - Avalie qualidade dos ativos e estrutura de capital
+
+    Organize as informações de forma estruturada e clara, destacando pontos críticos.
+    Utilize a ferramenta DocumentAnalysisTool para estruturar as informações extraídas no formato Pydantic adequado.
+  expected_output: >
+    Um relatório estruturado com todas as informações críticas extraídas do documento,
+    organizadas por categorias relevantes, com destaque para pontos de atenção e
+    inconsistências identificadas. Inclua tabelas e listas para facilitar a compreensão.
+    O resultado deve seguir o esquema Pydantic definido para o tipo de documento analisado.
+  agent: document_analyst
+
+context_research_task:
+  description: >
+    Com base na análise inicial do documento ({document_type}) realizada pelo Analista de Documentos,
+    pesquise e forneça contexto jurídico, contábil e mercadológico relevante para enriquecer a análise.
+
+    Utilize a ferramenta TextSearchTool para arquivos de texto (.txt) ou as ferramentas de busca em
+    documentos (PDFSearchTool, DOCXSearchTool, etc.) para consultar documentos complementares
+    em {documents_folder} que possam conter informações relevantes, como:
+    - Histórico de alterações contratuais anteriores
+    - Demonstrações financeiras de períodos anteriores
+    - Documentos setoriais e de mercado
+
+    Considere:
+    - Histórico de alterações contratuais e seus impactos (se disponível)
+    - Relações entre sócios e outras empresas do grupo econômico
+    - Precedentes judiciais relevantes para o tipo de estrutura societária
+    - Benchmarks setoriais para os indicadores financeiros identificados
+    - Tendências macroeconômicas relevantes para o negócio
+    - Notícias e fatos relevantes sobre a empresa ou setor (se identificável)
+    - Riscos regulatórios específicos do setor
+
+    Correlacione estas informações contextuais com os dados extraídos do documento.
+  expected_output: >
+    Um relatório contextual que enriquece a análise inicial com informações externas
+    relevantes, estabelecendo conexões claras entre o contexto e os dados do documento.
+    Destaque padrões setoriais, precedentes importantes e informações complementares
+    que permitam uma avaliação mais precisa e abrangente.
+  agent: legal_financial_researcher
+
+risk_assessment_task:
+  description: >
+    Com base na análise do documento ({document_type}) e no contexto fornecido,
+    realize uma avaliação abrangente dos riscos identificados, quantificando seu
+    potencial impacto e propondo estratégias concretas de mitigação.
+
+    Utilize a ferramenta TextSearchTool para arquivos de texto (.txt) ou as ferramentas de busca em
+    documentos (PDFSearchTool, DOCXSearchTool, etc.) para consultar documentos complementares
+    em {documents_folder} que possam conter informações relevantes para a avaliação de riscos,
+    como histórico de contingências, processos judiciais ou relatórios setoriais.
+
+    Utilize a ferramenta DocumentRiskAnalysisTool para estruturar a análise de riscos no formato Pydantic adequado.
+
+    Sua avaliação deve:
+    - Mapear riscos jurídicos, financeiros, operacionais e reputacionais
+    - Classificar riscos por probabilidade, impacto e horizonte temporal
+    - Identificar correlações entre diferentes fatores de risco
+    - Estimar impacto financeiro potencial de cada risco identificado
+    - Desenvolver cenários de estresse baseados nos riscos mapeados
+    - Avaliar capacidade da empresa de absorver impactos negativos
+    - Recomendar cláusulas contratuais específicas para proteção
+    - Sugerir estruturas de garantias adequadas ao perfil de risco
+    - Propor indicadores para monitoramento contínuo
+  expected_output: >
+    Uma matriz de riscos detalhada que classifica e quantifica cada risco identificado,
+    com análise de impacto potencial e probabilidade. Inclua recomendações específicas
+    de mitigação para cada categoria de risco, bem como estratégias de monitoramento
+    contínuo. Apresente cenários de estresse e seus possíveis impactos.
+    O resultado deve seguir o esquema Pydantic definido para análise de riscos.
+  agent: risk_assessment_specialist
+
+final_report_task:
+  description: >
+    Integre todas as análises anteriores (análise documental, pesquisa contextual e
+    avaliação de riscos) em um relatório executivo abrangente sobre o documento analisado ({document_type}).
+
+    Utilize a ferramenta TextSearchTool para arquivos de texto (.txt) ou as ferramentas de busca em
+    documentos (PDFSearchTool, DOCXSearchTool, etc.) para consultar os resultados das análises anteriores
+    e quaisquer documentos complementares em {documents_folder} que possam enriquecer o relatório final.
+
+    O relatório deve:
+    - Sintetizar os principais achados de forma clara e objetiva
+    - Destacar pontos críticos que merecem atenção imediata
+    - Apresentar uma visão equilibrada de riscos e oportunidades
+    - Incluir visualizações e tabelas para facilitar a compreensão
+    - Fornecer recomendações acionáveis para tomada de decisão
+    - Sugerir próximos passos e análises complementares necessárias
+
+    O relatório deve ser estruturado de forma a permitir diferentes níveis de leitura,
+    com um sumário executivo conciso seguido de seções detalhadas para cada aspecto relevante.
+
+    Certifique-se de que o relatório final incorpore todas as informações estruturadas
+    nos formatos Pydantic gerados nas etapas anteriores, apresentando-as de forma clara e acessível.
+  expected_output: >
+    Um relatório executivo completo em formato markdown, com sumário executivo,
+    seções detalhadas para cada aspecto relevante da análise, visualizações
+    de dados quando aplicável, e recomendações claras e acionáveis. O relatório
+    deve ser profissional, objetivo e fornecer uma base sólida para tomada de decisão.
+
+    O relatório deve refletir a estrutura de dados Pydantic definida para a análise
+    completa de documentos, garantindo que todas as informações críticas sejam apresentadas
+    de forma organizada e compreensível.
+  agent: reporting_analyst
